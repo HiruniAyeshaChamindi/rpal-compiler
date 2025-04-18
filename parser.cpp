@@ -10,6 +10,7 @@ static size_t currentTokenIndex = 0;
 static ASTNode *parseE();
 static ASTNode *parseEw();
 static ASTNode *parseT();
+
 static ASTNode *parseTa();
 static ASTNode *parseTc();
 static ASTNode *parseB();

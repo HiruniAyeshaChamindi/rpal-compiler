@@ -44,8 +44,9 @@ int main(int argc, char *argv[])
 
     if (printAst)
         printAST(root);
+    // should be changed.
     else
-        cout << "Parser executed. Use -ast to print AST." << endl;
+        cout << "Output of the above program is:" << endl;
 
     return 0;
 }
