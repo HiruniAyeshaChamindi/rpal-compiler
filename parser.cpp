@@ -391,43 +391,62 @@ static ASTNode *parseDr()
     return parseDb();
 }
 
-static ASTNode *parseDb()
-{
-    if (match("("))
-    {
+static ASTNode *parseDb() {
+    if (match("(")) {
         ASTNode *node = parseD();
-        if (!match(")"))
-        {
-            cerr << "Expected ')'\n";
+        if (!match(")")) {
+            cerr << "Expected ')' after '(' in Db\n";
             exit(1);
         }
         return node;
     }
-    if (peek().type == TokenType::IDENTIFIER)
-    {
+
+    if (peek().type == TokenType::IDENTIFIER) {
         string id = next().value;
-        if (peek().type == TokenType::IDENTIFIER || peek().value == "(")
-        {
+
+        if (peek().type == TokenType::IDENTIFIER || peek().value == "(") {
             ASTNode *node = new ASTNode("function_form");
             node->children.push_back(new ASTNode("<ID:" + id + ">"));
-            while (peek().type == TokenType::IDENTIFIER || peek().value == "(")
-                node->children.push_back(parseVb());
-            if (!match("="))
-            {
-                cerr << "Expected '='\n";
+
+            // Parse Vb+
+            vector<ASTNode*> vbList;
+            do {
+                ASTNode* vb = parseVb();
+                if (vb->label == ",") {
+                    for (ASTNode* c : vb->children) {
+                        vbList.push_back(c);
+                    }
+                } else {
+                    vbList.push_back(vb);
+                }
+            } while (peek().type == TokenType::IDENTIFIER || peek().value == "(");
+
+            // Wrap vbList into a comma node if multiple parameters
+            if (vbList.size() == 1) {
+                node->children.push_back(vbList[0]);
+            } else {
+                ASTNode* comma = new ASTNode(",");
+                for (ASTNode* v : vbList)
+                    comma->children.push_back(v);
+                node->children.push_back(comma);
+            }
+
+            if (!match("=")) {
+                cerr << "Expected '=' after function parameters in Db\n";
                 exit(1);
             }
+
             node->children.push_back(parseE());
             return node;
         }
-        else if (match("="))
-        {
+        else if (match("=")) {
             ASTNode *node = new ASTNode("=");
             node->children.push_back(new ASTNode("<ID:" + id + ">"));
             node->children.push_back(parseE());
             return node;
         }
     }
+
     cerr << "Unexpected token in Db\n";
     exit(1);
 }
