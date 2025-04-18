@@ -1,0 +1,4 @@
+To run the lexical analizer:
+
+    g++ -o myrpal lexer.cpp
+    ./myrpal sample.rpal
