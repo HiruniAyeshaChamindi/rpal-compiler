@@ -1,4 +1,4 @@
 To run the lexical analizer:
 
-    g++ -o myrpal lexer.cpp
+    g++ -std=c++17 -o myrpal main.cpp lexer.cpp parser.cpp
     ./myrpal sample.rpal
