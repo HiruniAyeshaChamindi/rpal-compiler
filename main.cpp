@@ -1,5 +1,6 @@
 #include "lexer.h"
 #include "parser.h"
+#include "standardizer.h"
 #include <fstream>
 #include <iostream>
 
@@ -43,10 +44,17 @@ int main(int argc, char *argv[])
     ASTNode *root = parse();
 
     if (printAst)
+    {
         printAST(root);
-    // should be changed.
+    }
     else
+    {
+        standardize(root);
         cout << "Output of the above program is:" << endl;
+
+        // Placeholder: here you’ll run the CSE machine on root
+        printAST(root); // temporary: show standardized tree
+    }
 
     return 0;
 }
