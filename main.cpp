@@ -1,6 +1,7 @@
 #include "lexer.h"
 #include "parser.h"
 #include "standardizer.h"
+#include "cse_machine.h"
 #include <fstream>
 #include <iostream>
 
@@ -50,11 +51,34 @@ int main(int argc, char *argv[])
     else
     {
         standardize(root);
-        cout << "Output of the above program is:" << endl;
+        if (!printAst)
+        {
+            standardize(root);
+            cout << "Output of the above program is:\n";
+
+            CSEMachine cse(root);
+            Value result = cse.run();
+
+            // Print result based on its type
+            if (std::holds_alternative<int>(result))
+            {
+                cout << std::get<int>(result) << endl;
+            }
+            else if (std::holds_alternative<bool>(result))
+            {
+                cout << (std::get<bool>(result) ? "true" : "false") << endl;
+            }
+            else if (std::holds_alternative<std::string>(result))
+            {
+                cout << std::get<std::string>(result) << endl;
+            }
+        }
+    }
+    else
 
         // Placeholder: here you’ll run the CSE machine on root
         printAST(root); // temporary: show standardized tree
-    }
+}
 
-    return 0;
+return 0;
 }
